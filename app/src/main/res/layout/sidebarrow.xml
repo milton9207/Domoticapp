@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:clickable="true"
+              android:background="@drawable/selectorrow"
+
+              android:layout_width="match_parent"
+              android:layout_height="100dp">
+
+    <ImageView
+
+
+            android:clickable="true"
+            android:id="@+id/recycler_imageview_sidebar"
+            android:src="@drawable/ic_action"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:contentDescription="IconSideBar"
+            android:layout_height="0dp"/>
+
+</LinearLayout>

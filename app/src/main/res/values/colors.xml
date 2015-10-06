@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="PrimaryColor">#3F51B5</color>
+    <color name="PrimaryDarkColor">#303F9F</color>
+    <color name="AccentColor">#FF4081</color>
+    <color name="NavBarColor">#2c2c31</color>
+    <color name="Background_gradient_1">#ff272a37</color>
+    <color name="Background_gradient_2">#28292e</color>
+    <color name="Selecte_item_color">#2cb9b8</color>
+    <color name="Selected_light_background_color">#ff0072b5</color>
+
+</resources>

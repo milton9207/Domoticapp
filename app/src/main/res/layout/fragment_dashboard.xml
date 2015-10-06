@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@drawable/myrect"
+              android:elevation="8dp"
+
+              >
+
+    <include layout="@layout/toolbar"
+             android:id="@+id/toolbar"/>
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+
+            android:background="@drawable/myrect"
+            android:elevation="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment"
+
+
+            />
+
+    <Button
+
+
+            android:text="prueba"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+                        />
+
+</LinearLayout>

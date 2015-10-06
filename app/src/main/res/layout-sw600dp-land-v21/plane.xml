@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/dummyfrag_bg"
+        android:background="@drawable/gradient"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <TextView
+
+            android:id="@+id/title_plane"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="@dimen/abc_text_size_display_1_material"
+            android:text="LIGHTS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/side_Bar_recyclerView"
+            android:layout_toEndOf="@+id/side_Bar_recyclerView"
+            android:layout_marginLeft="46dp"
+            android:layout_marginStart="46dp"/>
+
+    <RelativeLayout
+
+            android:id="@+id/panelLayout"
+            android:elevation="8dp"
+            android:layout_marginTop="38dp"
+            android:background="@color/NavBarColor"
+            android:orientation="vertical"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_plane"
+            android:layout_alignLeft="@+id/title_plane"
+            android:layout_alignStart="@+id/title_plane">
+
+
+        <TextView
+
+                android:layout_centerHorizontal="true"
+                android:id="@+id/OnOffTitle"
+                style="@style/plane_text_header"
+                android:text="Off/On"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.SwitchCompat
+
+                style="@style/Theme.AppCompat.Light.DarkActionBar"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/OnOffSwitch"
+                android:layout_below="@+id/OnOffTitle"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                />
+
+
+        <TextView
+
+                android:id="@+id/TurnOn"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/OnOffSwitch"
+                style="@style/plane_text_header"
+                android:text="Turn on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <RadioGroup
+
+
+
+
+                android:id="@+id/radioGroupPanel"
+                android:layout_below="@id/TurnOn"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/TurnOn">
+
+            <RadioButton
+                    style="@style/plane_text_subheader"
+                    android:id="@+id/radio_15min"
+                    android:text="15 MIN"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+            <RadioButton
+                    style="@style/plane_text_subheader"
+                    android:id="@+id/radio_30min"
+                    android:text="30 MIN"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+            <RadioButton
+                    style="@style/plane_text_subheader"
+                    android:id="@+id/radio_2hrs"
+                    android:text="2 HRS"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+        </RadioGroup>
+
+
+        <TextView
+
+                android:id="@+id/CustomText"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/radioGroupPanel"
+                style="@style/plane_text_header"
+                android:text="Custom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/customOP1Text"
+                style="@style/plane_text_subheader"
+                android:text="8:00 a.m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/CustomText"
+                android:layout_toLeftOf="@+id/TurnOn"
+                android:layout_toStartOf="@+id/TurnOn"/>
+
+        <android.support.v7.widget.SwitchCompat
+                android:id="@+id/customSwitch"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_alignBaseline="@+id/customOP1Text"
+                android:layout_toEndOf="@+id/OnOffSwitch"/>
+
+            <Button
+                    android:layout_marginTop="30dp"
+                    android:layout_centerHorizontal="true"
+                    android:text="Done"
+                    android:id="@+id/panelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/customOP1Text"
+
+                    />
+
+        <View
+                android:id="@+id/blankView"
+                android:layout_below="@id/panelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"/>
+
+
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+            android:layout_toEndOf="@+id/panelLayout"
+            android:id="@+id/ligths_plane_layout"
+            android:layout_width="550dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="100dp"
+            android:layout_height="wrap_content">
+        <ImageView
+                android:src="@drawable/plane"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+
+        <com.example.domoticapp.app.Util.RelativeRadioGroup
+                android:id="@+id/lights_radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <RadioButton
+                    android:layout_marginTop="180dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    style="@style/RadioButton"
+                    android:id="@+id/light_item_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    />
+
+            <RadioButton
+                    style="@style/RadioButton"
+                    android:layout_alignTop="@+id/light_item_icon"
+                    android:layout_toRightOf="@+id/light_item_icon"
+                    android:layout_toEndOf="@+id/light_item_icon"
+                    android:id="@+id/radio_light2"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"/>
+
+        </com.example.domoticapp.app.Util.RelativeRadioGroup>
+
+        <ImageView
+                android:id="@+id/ligth1"
+                android:src="@drawable/light_yellow"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selecter_light"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="110dp"/>
+
+        <ImageView
+                android:id="@+id/ligth2"
+                android:src="@drawable/light_yellow"
+                android:background="@drawable/selecter_light"
+
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+
+                android:layout_alignTop="@+id/ligth1"
+                android:layout_toRightOf="@+id/ligth1"
+                android:layout_toEndOf="@+id/ligth1"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

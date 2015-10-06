@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/light_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cocina"
+            android:textColor="@color/material_blue_grey_800"
+            android:textSize="15sp"/>
+
+    <ImageView
+            android:layout_below="@+id/light_item_title"
+            android:background="@drawable/icono_cocina"
+            android:id="@+id/light_item_icon"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+
+    <android.support.v7.widget.SwitchCompat
+
+            android:id="@+id/OnOffSwitch"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignTop="@+id/light_item_icon"
+            android:layout_toRightOf="@+id/light_item_icon"
+            android:layout_toEndOf="@+id/light_item_icon"
+            android:layout_marginTop="50dp"/>
+
+
+
+</RelativeLayout>

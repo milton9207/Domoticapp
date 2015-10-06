@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="plane_text_header">
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">@dimen/abc_text_size_title_material</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">25dp</item>
+    </style>
+
+    <style name="plane_text_subheader">
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">@dimen/abc_text_size_subhead_material</item>
+        <item name="android:layout_marginTop">10dp</item>
+
+
+    </style>
+</resources>
