@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_margin="10dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <TextView
             android:id="@+id/light_item_title"
@@ -30,6 +32,27 @@
             android:layout_toEndOf="@+id/light_item_icon"
             android:layout_marginTop="50dp"/>
 
+    <Button
+            android:id="@+id/picker_color_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_colorpicker"
+            android:layout_below="@+id/OnOffSwitch"
+            android:layout_toRightOf="@+id/light_item_icon"
+            android:layout_toEndOf="@+id/light_item_icon"
+            android:layout_marginTop="28dp"/>
+
+    <!--<com.example.domoticapp.app.Util.GradientView-->
+            <!--android:layout_below="@id/picker_color_button"-->
+            <!--android:id="@+id/top_gradient"-->
+            <!--app:radius="@dimen/radius"-->
+            <!--app:pointerDrawable="@drawable/pointer_simple"-->
+            <!--app:lockPointerInBounds="true"-->
+            <!--android:background="@drawable/gradient_background"-->
+            <!--android:layout_margin="@dimen/gap_large"-->
+            <!--android:padding="@dimen/gap_small"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="300dp"/>-->
 
 
 </RelativeLayout>

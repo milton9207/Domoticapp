@@ -1,7 +1,11 @@
 package com.example.domoticapp.app.Fragments.PlaneTab;
 
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
@@ -10,11 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.domoticapp.app.Adapters.LightListRecyclerAdapter;
+import com.example.domoticapp.app.Fragments.ColorPickerFragment;
 import com.example.domoticapp.app.Modules.LightModule.Light;
 import com.example.domoticapp.app.Modules.LightModule.Panel;
 import com.example.domoticapp.app.R;
-import com.example.domoticapp.app.Util.ObserverInterface.LightCacheUpdateListener;
-import com.example.domoticapp.app.Util.ObserverInterface.MyChangeEvent;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,8 @@ import java.util.List;
  */
 public class CardModuleFragment extends LightModuleAbstractFragment
         implements LightListRecyclerAdapter.RecyclerViewClickListener {
+
+
 
     LightListRecyclerAdapter adapter;
     List<Panel> mPanels = new ArrayList<Panel>();
@@ -52,11 +58,19 @@ public class CardModuleFragment extends LightModuleAbstractFragment
     @Override
     protected void manageCacheUpdate() {
 
+
         Log.d(TAG, "LOCAL + " + isLocal + " ADAPTer LOCAL +" + adapter.isLocal);
         if (!isLocal) {
-            adapter.removeAllItems();
-            adapter.addListItems(new Light().getAllLights());
-            adapter.notifyDataSetChanged();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    adapter.removeAllItems();
+                    adapter.addListItems(new Light().getAllLights());
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
             Log.d(TAG, "isnt local " + isLocal + " " + adapter.isLocal);
 
         }
@@ -86,6 +100,23 @@ public class CardModuleFragment extends LightModuleAbstractFragment
 
     @Override
     public void switchListClickerd(View v, int position, SwitchCompat switchCompat) {
+
+    }
+
+    @Override
+    public void colorPickerButtonListClicked(View v, int position, Panel panel) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        Fragment prev = getFragmentManager().findFragmentByTag("frag");
+        if (prev != null) {
+            Log.d(TAG, "prev Fragment Picker " + prev.toString());
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        ColorPickerFragment pickerFragment = ColorPickerFragment.newInstance(panel);
+        pickerFragment.show(ft, "frag");
 
     }
 

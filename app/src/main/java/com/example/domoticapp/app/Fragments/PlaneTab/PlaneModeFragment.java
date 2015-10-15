@@ -10,8 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import com.example.domoticapp.app.Modules.LightModule.Light;
+import com.example.domoticapp.app.Modules.LightModule.LightState;
 import com.example.domoticapp.app.Modules.LightModule.Panel;
 import com.example.domoticapp.app.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -19,13 +23,29 @@ import com.example.domoticapp.app.R;
  */
 public class PlaneModeFragment extends LightModuleAbstractFragment {
 
+    private final int TYPE = FragmentManager.PLANE_LAYOUT;
+    private volatile LightState lightState = new LightState();
+    private Timer timer = new Timer();
+    private volatile int tempColor;
+
+    long t = System.currentTimeMillis();
+    long end;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mPanel = new Panel(view);
+        mPanel = new Panel(view, TYPE);
         mPanel.defaultPanelState();
+
+        timer.schedule(new TimerTask(), 0L, 5000);
 
 
         RadioButton rButton1 = (RadioButton) view.findViewById(R.id.light_item_icon);
@@ -37,7 +57,9 @@ public class PlaneModeFragment extends LightModuleAbstractFragment {
 
                 mPanel.setLight(Light.getInstance("1"));
                 mPanel.update();
+                mPanel.updateColor();
                 mPanel.setupViewsListeners();
+                mPanel.isLocalPanel = true;
             }
         });
 
@@ -49,7 +71,9 @@ public class PlaneModeFragment extends LightModuleAbstractFragment {
 //                Log.d(TAG,"Inside Light2 rbutton" + light2.getId());
                 mPanel.setLight(Light.getInstance("3"));
                 mPanel.update();
+                mPanel.updateColor();
                 mPanel.setupViewsListeners();
+                mPanel.isLocalPanel = true;
 
             }
         });
@@ -58,53 +82,77 @@ public class PlaneModeFragment extends LightModuleAbstractFragment {
 
     }
 
-    @Override
-    protected void manageCacheUpdate() {
-        // if the update isnt from the local panel(app instance from device) then dont resend the
-        // update command
-        if (mPanel != null && !mPanel.isLocalPanel && mPanel.getCurrentLight() != null) {
-            //getting the actual light from the panel(actual light that is focused)for reference
-            final Light tempLight = mPanel.getCurrentLight();
-            //refreshing light state from cache
-            tempLight.refreshState(tempLight);
-            getActivity().runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
-                    mPanel.setLight(tempLight);
-                    mPanel.update();
-                    Log.d(TAG, "inside onCache runOnUi... " + tempLight.getId());
+    class TimerTask extends java.util.TimerTask {
 
-                }
-            });
+        @Override
+        public void run() {
 
-        }
-        //if the update is from the local panel
-        // wait 2 secs (sleep) then reactivate the heartbeat
-        if (mPanel != null && mPanel.isLocalPanel) {
-//            try {
-//                //in case of overlaping ocurre increase sleep seconds
-//                Thread.sleep(500);
-//                if (!phHueSDK.isHeartbeatEnabled(bridge)) {
-//                    manager.enableFullConfigHeartbeat(bridge, HEARTBEAT_TIME);
-//                    Log.d(TAG, "heartBeat on");
-//                }
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            if (!phHueSDK.isHeartbeatEnabled(bridge)) {
-                manager.enableFullConfigHeartbeat(bridge, HEARTBEAT_TIME);
-                Log.d(TAG, "heartBeat on");
+            Light tempLight = mPanel.getCurrentLight();
+
+            if (!tempLight.getId().equals("generic")) {
+                lightState = tempLight.refreshState(tempLight);
+                tempColor = lightState.getColor();
+                mPanel.setLight(tempLight);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPanel.update();
+                        Log.d(TAG, "inside TimerTask runOnUi... ");
+                    }
+                });
             }
-            mPanel.isLocalPanel = false;
-            Log.d(TAG, "Outside if");
+
         }
 
     }
 
     @Override
-    protected View createView(LayoutInflater inflater,ViewGroup container) {
+    protected void manageCacheUpdate() {
+
+
+        //get current light
+        final Light tempLight = mPanel.getCurrentLight();
+        lightState = tempLight.refreshState(tempLight);
+
+        //currentcolor is always updated with the actual color
+        //of the lamp
+        int currentColor = lightState.getColor();
+
+
+        //get the time that we need keep updating the
+        //temporal color (tempColor)
+        end = mPanel.time + 5000;
+        //when the current time is > than the end the tempcolor
+        //dont keep updating
+        if (System.currentTimeMillis() < end) {
+
+            tempColor = lightState.getColor();
+
+        }
+
+        //Debug porpouse
+        boolean igual = currentColor==tempColor;
+        Log.i(TAG, "current color " + currentColor + " temp color: " + tempColor + " " + igual);
+
+        //if the color is diferent from the one that was keep(tempColor), it means
+        // that we didnt change the color from this device
+        if (tempColor != currentColor) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mPanel.setLight(tempLight);
+                    mPanel.updateColor();
+                    Log.d(TAG, "inside onCache runOnUi... ");
+                }
+            });
+
+        }
+
+    }
+
+    @Override
+    protected View createView(LayoutInflater inflater, ViewGroup container) {
 
         final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.AppTheme_Base_Dark);
         // clone the inflater using the ContextThemeWrapper

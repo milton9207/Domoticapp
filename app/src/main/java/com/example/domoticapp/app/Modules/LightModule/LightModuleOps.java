@@ -5,6 +5,7 @@ import com.example.domoticapp.app.Modules.BaseModulesOps;
 import com.example.domoticapp.app.Util.LightListenerLoggin;
 import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.hue.sdk.utilities.impl.PHUtilitiesHelper;
 import com.philips.lighting.model.*;
 
 import java.util.*;
@@ -67,14 +68,25 @@ public class LightModuleOps implements BaseModulesOps, Observer{
 
     private LightState getStateFromCache(PHLight phLight)
     {
-        LightState lightState = new LightState();
-        if (phLight.getLastKnownLightState().isOn())
-            lightState.setPower(Light.Power.ON);
-        else
-            lightState.setPower(Light.Power.OFF);
-        //        Log.d(TAG,phLight.toString());
+//        String lightModel = phLight.getModelNumber();
+//        PHUtilitiesHelper phUtil = new PHUtilitiesHelper();
+//        int color;
+//        float xy[] = new float[]{
+//                phLight.getLastKnownLightState().getX(),
+//                phLight.getLastKnownLightState().getY()
+//        };
+//
+//        color = phUtil.colorFromXY(xy,lightModel);
+//
+//        LightState lightState = new LightState();
+//        if (phLight.getLastKnownLightState().isOn())
+//            lightState.setPower(Light.Power.ON);
+//        else
+//            lightState.setPower(Light.Power.OFF);
+//        //        Log.d(TAG,phLight.toString());
+//        lightState.setColor(color);
 
-        return lightState;
+        return validateState(phLight);
 
     }
 
@@ -86,20 +98,103 @@ public class LightModuleOps implements BaseModulesOps, Observer{
 
     public LightState refreshStateFromCache()
     {
-        LightState lightState = new LightState();
         PHLight phLight = cache.getLights().get(light.getId());
+        LightState lightState = validateState(phLight);
 
-        Log.d(TAG,"refreshStateFromCache " + phLight.getIdentifier());
+//        Log.d(TAG,"refreshStateFromCache " + phLight.getIdentifier());
+
+//        if (phLight.getLastKnownLightState().isOn())
+//            lightState.setPower(Light.Power.ON);
+//        else
+//            lightState.setPower(Light.Power.OFF);
+
+        light.setState(lightState);
+
+        return lightState;
+
+    }
+
+
+
+    private LightState validateState(PHLight phLight)
+    {
+        phLight.getLastKnownLightState().validateState();
+        LightState lightState = new LightState();
+        String lightModel = phLight.getModelNumber();
+        PHUtilitiesHelper phUtil = new PHUtilitiesHelper();
+        int color;
+        float xy[] = new float[]{
+                phLight.getLastKnownLightState().getX(),
+                phLight.getLastKnownLightState().getY()
+        };
+
+        color = phUtil.colorFromXY(xy,lightModel);
 
         if (phLight.getLastKnownLightState().isOn())
             lightState.setPower(Light.Power.ON);
         else
             lightState.setPower(Light.Power.OFF);
 
-        light.setState(lightState);
+        lightState.setColor(color);
+
+
 
         return lightState;
 
+    }
+
+    //Set light color with X and Y values converted
+    // from the RGB representation
+    //
+    public void setColor(float x, float y )
+    {
+        state = new PHLightState();
+        state.setTransitionTime(0);
+        state.setX(x);
+        state.setY(y);
+
+
+        Log.d(TAG, "inside setColor, light: " + light.getId());
+        PHLight phLight = cache.getLights().get(light.getId());
+        bridge.updateLightState(phLight, state);
+
+
+    }
+
+    public void setColor(int color)
+    {
+        //get light from cache
+        PHLight phLight = cache.getLights().get(light.getId());
+        //get light model to calculate the XY
+        String lightModel = phLight.getModelNumber();
+        Log.d(TAG,"Inside setColor: "+  color);
+
+        //get the utility class to perform the convertion
+        PHUtilitiesHelper phUtil = new PHUtilitiesHelper();
+        float xy[] = phUtil.calculateXY(color,lightModel);
+        //obtain the X value from the xy[] array
+        float x = xy[0];
+        //obtain the Y value from the xy[] array
+        float y = xy[1];
+        //make a new state an pass in the xy values;
+        state = new PHLightState();
+        state.setTransitionTime(0);
+        state.setX(x);
+        state.setY(y);
+        //update the bridge
+        bridge.updateLightState(phLight,state);
+
+    }
+
+    public void setBrightness(int brightness)
+    {
+        state = new PHLightState();
+        state.setTransitionTime(0);
+        state.setBrightness(brightness);
+
+        Log.d(TAG, "inside setBrihtness " + brightness);
+        PHLight phLight = cache.getLights().get(light.getId());
+        bridge.updateLightState(phLight,state);
     }
 
     public void setOn() {

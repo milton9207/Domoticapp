@@ -88,7 +88,7 @@ public class Light {
         return state;
     }
 
-    public boolean updateState(LightState state,Light light) {
+    public boolean updatePowerState(LightState state, Light light) {
 //        lightOps.heartBeatOff();
         lightOps.setLight(light);
 
@@ -104,9 +104,36 @@ public class Light {
 //                break;
             default:
                 return false;
-
         }
 
+    }
+
+    public boolean updateBrighState(LightState state, Light light)
+    {
+        lightOps.setLight(light);
+
+        if(state!=null)
+        {
+            int brightness = state.getBrightness();
+            lightOps.setBrightness(brightness);
+            return true;
+        }
+
+        return false;
+    }
+    public boolean updateColorState(LightState state, Light light)
+    {
+        lightOps.setLight(light);
+//        lightOps.heartBeatOff();
+
+        if(state!=null)
+        {
+            int color = state.getColor();
+            lightOps.setColor(color);
+
+            return true;
+        }
+        else return false;
     }
 
     public String toString()

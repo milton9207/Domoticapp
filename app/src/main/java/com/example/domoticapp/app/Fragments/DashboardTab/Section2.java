@@ -48,9 +48,9 @@ public class Section2 extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(myContext.getSupportFragmentManager());
-        adapter.addFrag(new DummyFragment2(getResources().getColor(R.color.ripple_material_light)), "DOG");
-        adapter.addFrag(new DummyFragment2(getResources().getColor(R.color.ripple_material_light)), "DOG");
-        adapter.addFrag(new DummyFragment2(getResources().getColor(R.color.button_material_dark)), "MOUSE");
+//        adapter.addFrag(new DummyFragment2(getResources().getColor(R.color.ripple_material_light)), "DOG");
+//        adapter.addFrag(new DummyFragment2(getResources().getColor(R.color.ripple_material_light)), "DOG");
+//        adapter.addFrag(new DummyFragment2(getResources().getColor(R.color.button_material_dark)), "MOUSE");
         viewPager.setAdapter(adapter);
     }
 

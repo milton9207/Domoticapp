@@ -8,5 +8,7 @@
     <color name="Background_gradient_2">#28292e</color>
     <color name="Selecte_item_color">#2cb9b8</color>
     <color name="Selected_light_background_color">#ff0072b5</color>
+    <color name="picker_background">#ff7c7c7c</color>
+
 
 </resources>

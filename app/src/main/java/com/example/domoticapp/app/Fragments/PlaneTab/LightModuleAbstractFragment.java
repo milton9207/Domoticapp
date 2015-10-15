@@ -25,9 +25,6 @@ public abstract class LightModuleAbstractFragment extends LifecycleLogginFragmen
 
 
     protected final String TAG = getClass().getSimpleName();
-    public static final int  PLANE_LAYOUT = 0;
-    public static final int LIST_LAYOUT = 1;
-
     protected final int HEARTBEAT_TIME = 5000;
 
 
@@ -67,7 +64,7 @@ public abstract class LightModuleAbstractFragment extends LifecycleLogginFragmen
 
     @Override
     public void onLightCacheUpdated(MyChangeEvent event) {
-        Log.i(TAG, "onLightCacheUpdated HEHE SI JALA!" );
+//        Log.i(TAG, "onLightCacheUpdated HEHE SI JALA!" );
 
         phHueSDK = event.getPhHueSDK();
         bridge = event.getBridge();

@@ -24,8 +24,7 @@ public class DummyFragment2 extends Fragment {
 
 
     SimpleRecyclerAdapter adapter;
-    public DummyFragment2(int color) {
-        this.color = color;
+    public DummyFragment2() {
 
     }
     @Override
@@ -34,24 +33,24 @@ public class DummyFragment2 extends Fragment {
 
 
 
-        final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg2);
-
-        frameLayout.setBackgroundColor(color);
-
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        List<String> list = new ArrayList<String>();
-
-        for (int i = 0; i < 1; i++) {
-            list.add("datos " + i);
-        }
-
-//        adapter = new SimpleRecyclerAdapter(getActivity(),list);
-
-//        recyclerView.setAdapter(adapter);
+//        final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg2);
+//
+//        frameLayout.setBackgroundColor(color);
+//
+//        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerView.setHasFixedSize(true);
+//
+//        List<String> list = new ArrayList<String>();
+//
+//        for (int i = 0; i < 1; i++) {
+//            list.add("datos " + i);
+//        }
+//
+////        adapter = new SimpleRecyclerAdapter(getActivity(),list);
+//
+////        recyclerView.setAdapter(adapter);
 
         return view;
     }

@@ -38,6 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class BaseModulesFragment extends LifecycleLogginFragment {
 
     private final int HEARTBEAT_TIME = 5000;
+    private int TYPE = FragmentManager.CARD_LAYOUT;
 
     private LightModuleAbstractFragment planeModeFragment;
 
@@ -71,7 +72,6 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         super.onActivityCreated(savedInstanceState);
 
 
-
     }
 
     @Override
@@ -100,54 +100,34 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         adapter = new SideBarPlaneAdapter(getActivity(), list);
         recyclerView.setAdapter(adapter);
 
-
+        defaultFragment(TYPE);
 
 
         return view;
     }
 
-    public void manageFragmentTransaction()
-    {
+    public void defaultFragment(int type) {
+        manageFragmentTransaction(type);
+    }
+
+    public void manageFragmentTransaction(int type) {
 
         planeModeFragment = (PlaneModeFragment) getFragmentManager()
                 .findFragmentById(R.id.dummyfrag_bg);
-        if(planeModeFragment == null)
-        {
+        if (planeModeFragment == null) {
             planeModeFragment = FragmentManager
-                    .newLightModuleFragment(FragmentManager.PLANE_LAYOUT);
-
+                    .newLightModuleFragment(type);
         }
 
         removeAllListeners();
         addMyChangeListener(planeModeFragment);
         FragmentTransaction tr = getFragmentManager().beginTransaction();
         tr.replace(R.id.modules_fragment_container, planeModeFragment);
-        tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//        tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         tr.commit();
 
     }
 
-    public void manageFragmentTransaction2()
-    {
-
-
-        planeModeFragment = (LightModuleAbstractFragment) getFragmentManager()
-                .findFragmentById(R.id.card_layout);
-        if(planeModeFragment == null)
-        {
-            planeModeFragment = FragmentManager
-                    .newLightModuleFragment(FragmentManager.CARD_LAYOUT);
-
-        }
-
-        removeAllListeners();
-        addMyChangeListener(planeModeFragment);
-        FragmentTransaction tr = getFragmentManager().beginTransaction();
-        tr.replace(R.id.modules_fragment_container, planeModeFragment);
-        tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        tr.commit();
-
-    }
 
     @Override
     public void onStop() {
@@ -169,13 +149,12 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.action_settings_layer1:
-                manageFragmentTransaction2();
+                manageFragmentTransaction(TYPE = FragmentManager.PLANE_LAYOUT);
                 return true;
             case R.id.action_settings_layer2:
-                manageFragmentTransaction();
+                manageFragmentTransaction(TYPE = FragmentManager.CARD_LAYOUT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -190,17 +169,16 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         listeners.remove(l);
     }
 
-    public void removeAllListeners()
-    {
+    public void removeAllListeners() {
         listeners.clear();
     }
 
     // Event firing method.  Called internally by other class methods.
-    protected void fireChangeEvent() {
-        Log.d(TAG,"Inside fireChangeEvent " +listeners.size());
+    protected synchronized void fireChangeEvent() {
+        Log.d(TAG, "Inside fireChangeEvent " + listeners.size());
 
 
-        MyChangeEvent evt = new MyChangeEvent(this,phHueSDK,bridge,heartbeatManager);
+        MyChangeEvent evt = new MyChangeEvent(this, phHueSDK, bridge, heartbeatManager);
 
         for (LightCacheUpdateListener l : listeners) {
             l.onLightCacheUpdated(evt);
@@ -211,19 +189,18 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
     private PHSDKListener phsdkListener = new PHSDKListener() {
         @Override
         public void onCacheUpdated(List<Integer> list, final PHBridge phBridge) {
-            Log.d(TAG, "onCacheUpdated");
+            Log.d(TAG, "onCacheUpdated Bridge: " + phBridge.toString() + " local bridge: " + bridge.toString());
+
+
 
             if (list.contains(PHMessageType.LIGHTS_CACHE_UPDATED)) {
                 Log.d(TAG, "contains light cache update");
+                fireChangeEvent();
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fireChangeEvent();
-                    }
-                });
 
             }
+
+
         }
 
         @Override
