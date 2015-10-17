@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
@@ -45,7 +46,7 @@ public class CardModuleFragment extends LightModuleAbstractFragment
         lights = new Light().getAllLights();
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.card_layout_recyclerview);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),4));
 //        recyclerView.setHasFixedSize(true);
         adapter = new LightListRecyclerAdapter(getActivity(), lights, mPanel, this);
         recyclerView.setAdapter(adapter);

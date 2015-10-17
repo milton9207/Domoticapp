@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <include android:id="@+id/main_toolbar"
+             layout="@layout/toolbar"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/side_Bar_recyclerView"
+            android:background="@color/NavBarColor"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/main_toolbar">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+    <FrameLayout
+            android:id="@+id/modules_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/side_Bar_recyclerView"
+            android:layout_toRightOf="@+id/side_Bar_recyclerView"
+            android:layout_below="@id/main_toolbar"
+            android:layout_alignParentBottom="true">
+
+    </FrameLayout>
+
+</RelativeLayout>

@@ -19,17 +19,31 @@ import java.util.List;
 public class SideBarPlaneAdapter extends RecyclerView.Adapter<SideBarPlaneAdapter.MyViewHolder> {
 
     private SparseBooleanArray selectedItems;
+    private int selectedItem = 0;
+    private RecyclerView mRecyclerView;
 
     private List<Integer> data;
     private LayoutInflater inflater;
+    private static SideBarClickListener listener;
 
-    public SideBarPlaneAdapter(Context context, List list)
+    public interface SideBarClickListener
+    {
+        void onMenuItemClicked(int position);
+    }
+
+    public SideBarPlaneAdapter(Context context, List list, SideBarClickListener listener)
     {
         this.data = list;
+        this.listener = listener;
         inflater = LayoutInflater.from(context);
 
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -47,6 +61,8 @@ public class SideBarPlaneAdapter extends RecyclerView.Adapter<SideBarPlaneAdapte
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
 
+        //get the current item selected (highlighted)
+        holder.itemView.setSelected(selectedItem == position);
 
         Integer data = this.data.get(position);
         holder.imageView.setImageResource(data);
@@ -71,9 +87,9 @@ public class SideBarPlaneAdapter extends RecyclerView.Adapter<SideBarPlaneAdapte
             super(itemView);
 
             imageView = (ImageView) itemView.findViewById(R.id.recycler_imageview_sidebar);
+//            imageView.setOnClickListener(this);
+
             itemView.setOnClickListener(this);
-
-
 
         }
 
@@ -81,33 +97,16 @@ public class SideBarPlaneAdapter extends RecyclerView.Adapter<SideBarPlaneAdapte
         @Override
         public void onClick(View v) {
 
-            Log.i("gg",getPosition() + "");
+            // Redraw the old selection and the new
+            notifyItemChanged(selectedItem);
+            selectedItem = mRecyclerView.getChildPosition(v);
+            notifyItemChanged(selectedItem);
+
+            //get position and sent to the listener
             int itemPosition = getPosition();
+            Log.d("sideBarAdapter","clicked " + itemPosition);
+            listener.onMenuItemClicked(itemPosition);
 
-
-            switch (itemPosition)
-            {
-                case 0 :
-                    itemView.setSelected(true);
-//                    if(itemView.isSelected())
-//                    {
-//                        Log.i("gg","ff");
-//                        itemView.setSelected(false);
-//                    }
-//                    else
-//                    {
-//                        Log.i("gg","ff22");
-//
-//                        itemView.setSelected(true);
-//                    }
-//                    break;
-                    break;
-                case 1 :
-                    itemView.setSelected(true);
-                    break;
-            }
-
-//
         }
     }
 }

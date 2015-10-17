@@ -1,21 +1,12 @@
 package com.example.domoticapp.app.Fragments.PlaneTab;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
-import android.widget.ListView;
-import android.widget.RadioButton;
 import com.example.domoticapp.app.Adapters.SideBarPlaneAdapter;
-import com.example.domoticapp.app.Modules.LightModule.LightState;
-import com.example.domoticapp.app.Modules.LightModule.Panel;
 import com.example.domoticapp.app.R;
-import com.example.domoticapp.app.Modules.LightModule.Light;
 import com.example.domoticapp.app.Util.LifecycleLogginFragment;
 import com.example.domoticapp.app.Util.ObserverInterface.LightCacheUpdateListener;
 import com.example.domoticapp.app.Util.ObserverInterface.MyChangeEvent;
@@ -27,8 +18,6 @@ import com.philips.lighting.hue.sdk.heartbeat.PHHeartbeatManager;
 import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHHueParsingError;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -36,6 +25,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by milton on 14/07/15.
  */
 public class BaseModulesFragment extends LifecycleLogginFragment {
+
+    public static final String MODULE_LIGHT_FRAGMENT_TAG = "module light fragment";
+    public static final String LIGHT_LAYOUT_TYPE_KEY = "light layout key";
 
     private final int HEARTBEAT_TIME = 5000;
     private int TYPE = FragmentManager.CARD_LAYOUT;
@@ -57,6 +49,17 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
     private PHBridge bridge = phHueSDK.getSelectedBridge();
     private PHHeartbeatManager heartbeatManager = PHHeartbeatManager.getInstance();
 
+
+    public static BaseModulesFragment makeInstance(int type)
+    {
+        BaseModulesFragment  baseModulesFragment = new BaseModulesFragment();
+        Bundle args = new Bundle();
+        args.putInt(LIGHT_LAYOUT_TYPE_KEY,type);
+        baseModulesFragment.setArguments(args);
+
+        return baseModulesFragment;
+
+    }
 
     @Override
     public void onResume() {
@@ -85,23 +88,10 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        view = inflater.inflate(R.layout.base_modules_fragment, container, false);
+        view = inflater.inflate(R.layout.base_modules_fragment2, container, false);
+        int layout_type = getArguments().getInt(LIGHT_LAYOUT_TYPE_KEY);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.side_Bar_recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getBaseContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-
-
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(R.drawable.ic_action);
-        list.add(R.drawable.ic_action);
-
-        adapter = new SideBarPlaneAdapter(getActivity(), list);
-        recyclerView.setAdapter(adapter);
-
-        defaultFragment(TYPE);
-
+        defaultFragment(layout_type);
 
         return view;
     }
@@ -122,7 +112,7 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         removeAllListeners();
         addMyChangeListener(planeModeFragment);
         FragmentTransaction tr = getFragmentManager().beginTransaction();
-        tr.replace(R.id.modules_fragment_container, planeModeFragment);
+        tr.replace(R.id.light_layout_container, planeModeFragment);
 //        tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         tr.commit();
 

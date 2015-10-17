@@ -1,30 +1,32 @@
 package com.example.domoticapp.app.Activities;
 
-import android.app.FragmentManager;
-import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
-import android.app.ActionBar.OnNavigationListener;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import com.example.domoticapp.app.Fragments.PlaneTab.FragmentManager;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
-import com.example.domoticapp.app.Adapters.ViewPagerAdapter;
+import com.example.domoticapp.app.Adapters.SideBarPlaneAdapter;
 import com.example.domoticapp.app.Fragments.DashboardTab.DashboardMain;
 import com.example.domoticapp.app.Fragments.PlaneTab.BaseModulesFragment;
 import com.example.domoticapp.app.Fragments.PlaneTab.PlaneModeFragment;
+import com.example.domoticapp.app.Fragments.WelcomeFragment;
 import com.example.domoticapp.app.R;
 import com.example.domoticapp.app.Util.LifecycleLoggingActivity;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.hue.sdk.heartbeat.PHHeartbeatManager;
 import com.philips.lighting.model.PHBridge;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends LifecycleLoggingActivity {
+public class MainActivity extends LifecycleLoggingActivity implements SideBarPlaneAdapter.SideBarClickListener{
 
 
     private Toolbar toolbar;
@@ -32,6 +34,10 @@ public class MainActivity extends LifecycleLoggingActivity {
     private ListView listView;
     private List list;
     private PlaneModeFragment planeModeFragment;
+    private SideBarPlaneAdapter adapter;
+
+    private Fragment fragment;
+
 
     private PHHueSDK phHueSDK = PHHueSDK.create();
     private PHBridge bridge = phHueSDK.getSelectedBridge();
@@ -51,24 +57,29 @@ public class MainActivity extends LifecycleLoggingActivity {
         setContentView(R.layout.activity_main);
 
 
+        Log.d(TAG,isInTwoPaneMode() + "");
         //Mobile Mode
         if (!isInTwoPaneMode()) {
-            fragmentDashboardMain = new DashboardMain();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_main, fragmentDashboardMain)
-                    .commit();
+//            fragmentDashboardMain = new DashboardMain();
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragment_container_main, fragmentDashboardMain)
+//                    .commit();
 
         }
         //Tablet Mode
         else {
+
+            Log.d(TAG,"inside tablet Mode");
             //Setting up the toolbar
             setupToolbar();
+            //Setting up side bar
+            setupSideBar();
+            if(savedInstanceState !=null)
+            {
+                return;
+            }
 
-            //Setting up the tabs
-            ViewPager viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
-            setupViewPager(viewPager);
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
-            tabLayout.setupWithViewPager(viewPager);
+            defaultFragment(WelcomeFragment.WELCOME_FRAGMENT_TAG);
 
         }
     }
@@ -76,20 +87,53 @@ public class MainActivity extends LifecycleLoggingActivity {
 
     private void setupToolbar() {
 
-        toolbar = (Toolbar) findViewById(R.id.tabanim_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
 
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        BaseModulesFragment baseModulesFragment = new BaseModulesFragment();
-        adapter.addFrag(new DashboardMain(), "DASHBOARD");
-        adapter.addFrag(baseModulesFragment, "PLANE");
-//        adapter.addFrag(new BaseModulesFragment(), "MOUSE");
-        viewPager.setAdapter(adapter);
+    private void setupSideBar()
+    {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.side_Bar_recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
+
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(R.drawable.ic_action);
+        list.add(R.drawable.ic_action);
+
+        adapter = new SideBarPlaneAdapter(this, list,this);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void defaultFragment(String type)
+    {
+        manageFragmentTransaction(type);
+    }
+
+    private void manageFragmentTransaction(String type)
+    {
+        if(type.equals(WelcomeFragment.WELCOME_FRAGMENT_TAG))
+        {
+            fragment = WelcomeFragment.makeInstance();
+        }
+        else if(type.equals(BaseModulesFragment.MODULE_LIGHT_FRAGMENT_TAG))
+        {
+            fragment = BaseModulesFragment.makeInstance(FragmentManager.CARD_LAYOUT);
+        }
+
+        if(fragment!=null)
+        {
+            Log.d(TAG,"Fragment created " + type);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.modules_fragment_container,fragment);
+
+            ft.commit();
+
+        }
     }
 
 
@@ -136,5 +180,20 @@ public class MainActivity extends LifecycleLoggingActivity {
 
     public boolean isInTwoPaneMode() {
         return findViewById(R.id.fragment_container_main) == null;
+    }
+
+    @Override
+    public void onMenuItemClicked(int position) {
+
+        switch (position)
+        {
+            case 0:
+                manageFragmentTransaction(WelcomeFragment.WELCOME_FRAGMENT_TAG);
+                break;
+            case 1:
+                manageFragmentTransaction(BaseModulesFragment.MODULE_LIGHT_FRAGMENT_TAG);
+                break;
+        }
+
     }
 }

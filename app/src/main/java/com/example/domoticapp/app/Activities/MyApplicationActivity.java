@@ -2,19 +2,13 @@ package com.example.domoticapp.app.Activities;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 import com.example.domoticapp.app.R;
 import com.example.domoticapp.app.Util.LightListenerLoggin;
-import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
