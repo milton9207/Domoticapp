@@ -8,9 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-import com.example.domoticapp.app.Fragments.PlaneTab.FragmentManager;
+import com.example.domoticapp.app.Fragments.PlaneTab.FragmentLayoutManager;
 import com.example.domoticapp.app.Modules.LightModule.Light;
 import com.example.domoticapp.app.Modules.LightModule.Panel;
 import com.example.domoticapp.app.R;
@@ -32,8 +31,8 @@ public class LightListRecyclerAdapter extends RecyclerView.Adapter<LightListRecy
     private List<Panel> mPanels;
     private View view;
 
-    private final int type = FragmentManager.CARD_LAYOUT;
-    public boolean isLocal = true;
+    private final int type = FragmentLayoutManager.CARD_LAYOUT;
+    public volatile boolean isLocal = true;
     private static RecyclerViewClickListener listener;
 
     public interface RecyclerViewClickListener

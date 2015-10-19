@@ -15,7 +15,6 @@ import com.example.domoticapp.app.Modules.LightModule.Panel;
 import com.example.domoticapp.app.R;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**
@@ -23,7 +22,6 @@ import java.util.TimerTask;
  */
 public class PlaneModeFragment extends LightModuleAbstractFragment {
 
-    private final int TYPE = FragmentManager.PLANE_LAYOUT;
     private volatile LightState lightState = new LightState();
     private Timer timer = new Timer();
     private volatile int tempColor;
@@ -161,6 +159,11 @@ public class PlaneModeFragment extends LightModuleAbstractFragment {
         view = localInflater.inflate(R.layout.plane, container, false);
 
         return view;
+    }
+
+    @Override
+    public void setLayoutType() {
+        TYPE = FragmentLayoutManager.PLANE_LAYOUT;
     }
 
 }

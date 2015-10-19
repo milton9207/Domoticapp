@@ -30,7 +30,7 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
     public static final String LIGHT_LAYOUT_TYPE_KEY = "light layout key";
 
     private final int HEARTBEAT_TIME = 5000;
-    private int TYPE = FragmentManager.CARD_LAYOUT;
+    private int TYPE;
 
     private LightModuleAbstractFragment planeModeFragment;
 
@@ -66,6 +66,9 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         super.onResume();
 
         phHueSDK.getNotificationManager().registerSDKListener(phsdkListener);
+        heartbeatManager.enableFullConfigHeartbeat(bridge, 5000);
+
+
 
 
     }
@@ -89,9 +92,9 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         view = inflater.inflate(R.layout.base_modules_fragment2, container, false);
-        int layout_type = getArguments().getInt(LIGHT_LAYOUT_TYPE_KEY);
+        TYPE = getArguments().getInt(LIGHT_LAYOUT_TYPE_KEY);
 
-        defaultFragment(layout_type);
+        defaultFragment(TYPE);
 
         return view;
     }
@@ -102,10 +105,13 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
 
     public void manageFragmentTransaction(int type) {
 
-        planeModeFragment = (PlaneModeFragment) getFragmentManager()
-                .findFragmentById(R.id.dummyfrag_bg);
-        if (planeModeFragment == null) {
-            planeModeFragment = FragmentManager
+        planeModeFragment = (LightModuleAbstractFragment) getFragmentManager()
+                .findFragmentById(R.id.light_layout_container);
+
+        //check whether the current fragment isnt already alive or in case is alive but
+        //we need to change to another layout type
+        if (planeModeFragment == null || planeModeFragment.getLayoutType()!= type) {
+            planeModeFragment = FragmentLayoutManager
                     .newLightModuleFragment(type);
         }
 
@@ -114,8 +120,16 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
         FragmentTransaction tr = getFragmentManager().beginTransaction();
         tr.replace(R.id.light_layout_container, planeModeFragment);
 //        tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
         tr.commit();
 
+    }
+
+
+    public void manageDestroyFragment()
+    {
+        if(planeModeFragment!=null)
+                 getFragmentManager().beginTransaction().remove(planeModeFragment).commit();
     }
 
 
@@ -123,17 +137,28 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
     public void onStop() {
         super.onStop();
 
-        if (phsdkListener != null) {
-            phHueSDK.getNotificationManager().unregisterSDKListener(phsdkListener);
-            Log.d(TAG, "PHSDKListener not null");
-
-        }
-
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        //IMPORTANT!
+        //necesary to do since the current fragment is currently managed by
+        //one activity that doesnt get destroyed
+        manageDestroyFragment();
+
+        if (phsdkListener != null) {
+            phHueSDK.getNotificationManager().unregisterSDKListener(phsdkListener);
+            Log.d(TAG, "PHSDKListener not null");
+
+            if (bridge != null) {
+                if (phHueSDK.isHeartbeatEnabled(bridge))
+                    heartbeatManager.disableAllHeartbeats(bridge);
+
+            }
+
+        }
 
     }
 
@@ -141,10 +166,10 @@ public class BaseModulesFragment extends LifecycleLogginFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings_layer1:
-                manageFragmentTransaction(TYPE = FragmentManager.PLANE_LAYOUT);
+                manageFragmentTransaction(TYPE = FragmentLayoutManager.PLANE_LAYOUT);
                 return true;
             case R.id.action_settings_layer2:
-                manageFragmentTransaction(TYPE = FragmentManager.CARD_LAYOUT);
+                manageFragmentTransaction(TYPE = FragmentLayoutManager.CARD_LAYOUT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

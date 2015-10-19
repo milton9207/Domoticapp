@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +22,7 @@ import com.example.domoticapp.app.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 
 /**
@@ -33,10 +33,32 @@ public class CardModuleFragment extends LightModuleAbstractFragment
 
 
 
-    LightListRecyclerAdapter adapter;
-    List<Panel> mPanels = new ArrayList<Panel>();
-    List<Light> lights = new ArrayList<Light>();
-    boolean isLocal = true;
+    private Timer timer = new Timer();
+
+    private volatile LightListRecyclerAdapter adapter;
+    private List<Panel> mPanels = new ArrayList<Panel>();
+    private List<Light> lights = new ArrayList<Light>();
+    private volatile boolean isLocal = true;
+
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        timer.cancel();
+//    }
+
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        timer.cancel();
+//    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        timer.cancel();
+        Log.i(TAG,"timer task canceled");
+    }
 
     @Nullable
     @Override
@@ -46,22 +68,23 @@ public class CardModuleFragment extends LightModuleAbstractFragment
         lights = new Light().getAllLights();
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.card_layout_recyclerview);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),4));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
 //        recyclerView.setHasFixedSize(true);
         adapter = new LightListRecyclerAdapter(getActivity(), lights, mPanel, this);
         recyclerView.setAdapter(adapter);
         mPanels = adapter.getmPanels();
 
+        timer.schedule(new TimerTask(), 0L, 5000);
+
+
 
         return view;
     }
 
-    @Override
-    protected void manageCacheUpdate() {
+    class TimerTask extends java.util.TimerTask{
 
-
-        Log.d(TAG, "LOCAL + " + isLocal + " ADAPTer LOCAL +" + adapter.isLocal);
-        if (!isLocal) {
+        @Override
+        public void run() {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -69,19 +92,39 @@ public class CardModuleFragment extends LightModuleAbstractFragment
                     adapter.removeAllItems();
                     adapter.addListItems(new Light().getAllLights());
                     adapter.notifyDataSetChanged();
+                    Log.d(TAG,"inside TimerTask runOnui...");
                 }
             });
 
-            Log.d(TAG, "isnt local " + isLocal + " " + adapter.isLocal);
-
         }
+    }
 
-        else if(isLocal && adapter.isLocal) {
-            Log.d(TAG,"is local");
-        }
+    @Override
+    protected void manageCacheUpdate() {
 
-        isLocal = false;
-        adapter.isLocal = false;
+
+//        Log.d(TAG, "LOCAL + " + isLocal + " ADAPTer LOCAL +" + adapter.isLocal);
+//        if (!isLocal) {
+////            getActivity().runOnUiThread(new Runnable() {
+////                @Override
+////                public void run() {
+////
+////                    adapter.removeAllItems();
+////                    adapter.addListItems(new Light().getAllLights());
+////                    adapter.notifyDataSetChanged();
+////                }
+////            });
+//
+//            Log.d(TAG, "isnt local " + isLocal + " " + adapter.isLocal);
+//
+//        }
+//
+//        else if(isLocal && adapter.isLocal) {
+//            Log.d(TAG,"is local");
+//        }
+//
+//        isLocal = false;
+//        adapter.isLocal = false;
 
     }
 
@@ -89,6 +132,11 @@ public class CardModuleFragment extends LightModuleAbstractFragment
     protected View createView(LayoutInflater inflater, ViewGroup container) {
 
         return inflater.inflate(R.layout.card_layout, container, false);
+    }
+
+    @Override
+    public void setLayoutType() {
+        TYPE = FragmentLayoutManager.CARD_LAYOUT;
     }
 
     @Override

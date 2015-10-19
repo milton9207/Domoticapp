@@ -4,7 +4,7 @@
               android:clickable="true"
               android:background="@drawable/selectorrow"
               android:layout_width="match_parent"
-              android:layout_height="100dp">
+              android:layout_height="80dp">
 
     <ImageView
             android:clickable="true"

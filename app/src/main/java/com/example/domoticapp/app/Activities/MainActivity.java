@@ -2,7 +2,7 @@ package com.example.domoticapp.app.Activities;
 
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import com.example.domoticapp.app.Fragments.PlaneTab.FragmentManager;
+import com.example.domoticapp.app.Fragments.PlaneTab.FragmentLayoutManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
 import com.example.domoticapp.app.Adapters.SideBarPlaneAdapter;
-import com.example.domoticapp.app.Fragments.DashboardTab.DashboardMain;
 import com.example.domoticapp.app.Fragments.PlaneTab.BaseModulesFragment;
 import com.example.domoticapp.app.Fragments.PlaneTab.PlaneModeFragment;
 import com.example.domoticapp.app.Fragments.WelcomeFragment;
@@ -30,7 +29,6 @@ public class MainActivity extends LifecycleLoggingActivity implements SideBarPla
 
 
     private Toolbar toolbar;
-    private DashboardMain fragmentDashboardMain;
     private ListView listView;
     private List list;
     private PlaneModeFragment planeModeFragment;
@@ -47,7 +45,7 @@ public class MainActivity extends LifecycleLoggingActivity implements SideBarPla
     protected void onResume() {
         super.onResume();
 
-        heartbeatManager.enableFullConfigHeartbeat(bridge, 5000);
+//        heartbeatManager.enableFullConfigHeartbeat(bridge, 5000);
 
     }
 
@@ -122,7 +120,7 @@ public class MainActivity extends LifecycleLoggingActivity implements SideBarPla
         }
         else if(type.equals(BaseModulesFragment.MODULE_LIGHT_FRAGMENT_TAG))
         {
-            fragment = BaseModulesFragment.makeInstance(FragmentManager.CARD_LAYOUT);
+            fragment = BaseModulesFragment.makeInstance(FragmentLayoutManager.CARD_LAYOUT);
         }
 
         if(fragment!=null)
@@ -171,8 +169,6 @@ public class MainActivity extends LifecycleLoggingActivity implements SideBarPla
     protected void onDestroy() {
         super.onDestroy();
         if (bridge != null) {
-            if (phHueSDK.isHeartbeatEnabled(bridge))
-                heartbeatManager.disableAllHeartbeats(bridge);
 
             phHueSDK.disconnect(bridge);
         }

@@ -17,6 +17,7 @@ public class LightState implements Serializable {
     private float colorY;
     private int color;
     private int brightness;
+    private boolean reacheable;
 
     public LightState(Light.Power Power) {
         this.Power = Power;
@@ -94,5 +95,11 @@ public class LightState implements Serializable {
     }
 
 
+    public void setReacheable(boolean reacheable) {
+        this.reacheable = reacheable;
+    }
 
+    public boolean isReacheable() {
+        return reacheable;
+    }
 }

@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
-import com.example.domoticapp.app.Fragments.PlaneTab.FragmentManager;
+import com.example.domoticapp.app.Fragments.PlaneTab.FragmentLayoutManager;
 import com.example.domoticapp.app.R;
 import com.example.domoticapp.app.Util.GradientView;
 
@@ -35,8 +35,8 @@ public class Panel implements Serializable {
     private RadioButton rButton2hrs;
     private Button doneButton;
     private GradientView gradientView;
-    private SeekBar brightSeekBar;
-    private Button colorPickerButton;
+    private volatile SeekBar brightSeekBar;
+    private volatile Button colorPickerButton;
 
 
     private volatile LightState state;
@@ -52,10 +52,7 @@ public class Panel implements Serializable {
         onOffswitch = (SwitchCompat) viewGroup.findViewById(R.id.OnOffSwitch);
         colorPickerButton = (Button) viewGroup.findViewById(R.id.picker_color_button);
         gradientView = (GradientView) viewGroup.findViewById(R.id.top_gradient);
-//        rButton15 = (RadioButton) viewGroup.findViewById(R.id.radio_15min);
-//        rButton30 = (RadioButton) viewGroup.findViewById(R.id.radio_30min);
-//        rButton2hrs = (RadioButton) viewGroup.findViewById(R.id.radio_2hrs);
-//        doneButton = (Button) viewGroup.findViewById(R.id.buttonPanel);
+
         //trying to above a null pointer exception
         //in the worse case is better to get a generic light insted of crash
         setLight(new Light("generic", new LightState()));
@@ -110,17 +107,18 @@ public class Panel implements Serializable {
 
         onOffswitch.setChecked(false);
         onOffswitch.setEnabled(false);
-//        rButton15.setEnabled(false);
-//        rButton30.setEnabled(false);
-//        rButton2hrs.setEnabled(false);
+
 
     }
 
     public void enablePanelState() {
         onOffswitch.setEnabled(true);
-//        rButton15.setEnabled(true);
-//        rButton30.setEnabled(true);
-//        rButton2hrs.setEnabled(true);
+
+    }
+
+    private void disablePanelState()
+    {
+        onOffswitch.setEnabled(false);
     }
 
     private void switchOn() {
@@ -144,7 +142,17 @@ public class Panel implements Serializable {
 
     public void updateColor() {
 //        isLocalPanel = true;
-        colorPickerButton.setBackgroundColor(state.getColor());
+        if(state.isReacheable())
+        {
+            isLocalPanel= true;
+            colorPickerButton.setBackgroundColor(state.getColor());
+
+        }
+        else
+        {
+            disablePanelState();
+            Log.d(TAG,"Light: " + light.getId() + "not reacheable");
+        }
 //        gradientView.updatePointerPosition();
         //IMPORTANTE!
         //Cambiar posicion del puntero pero no el color
@@ -154,30 +162,48 @@ public class Panel implements Serializable {
 
     public void updateBright()
     {
-        brightSeekBar.setProgress(state.getBrightness());
-        Log.d(TAG,"updateBRight bright: " + state.getBrightness());
+        if(state.isReacheable())
+        {
+            isLocalPanel = true;
+            brightSeekBar.setProgress(state.getBrightness());
+            Log.d(TAG,"updateBRight bright: " + state.getBrightness());
+        }
+        else
+        {
+            disablePanelState();
+            Log.d(TAG,"Light: " + light.getId() + "not reacheable");
+        }
     }
 
     public void update() {
 
-        enablePanelState();
-        isLocalPanel = true;
+        if(state.isReacheable())
+        {
+            enablePanelState();
+            isLocalPanel = true;
 
-        if (state.getPower() == Light.Power.ON) {
+            if (state.getPower() == Light.Power.ON) {
 
-            Log.d(TAG, "inside update POWER == ON " + light.getId() + "color: " + state.getColor());
+                Log.d(TAG, "inside update POWER == ON " + light.getId() + "color: " + state.getColor());
 
 //            switchOn();
-            onOffswitch.setChecked(true);
+                onOffswitch.setChecked(true);
 //            colorPickerButton.setBackgroundColor(state.getColor());
 //            gradientView.setColor(state.getColor());
 //            gradientView.updatePointerPosition();
 //            rButton15.setChecked(false);
 
-        } else if (state.getPower() == Light.Power.OFF) {
-            Log.d(TAG, "inside update POWER == OFF " + light.getId());
+            } else if (state.getPower() == Light.Power.OFF) {
+                Log.d(TAG, "inside update POWER == OFF " + light.getId());
 //            switchOff();
-            onOffswitch.setChecked(false);
+                onOffswitch.setChecked(false);
+            }
+
+        }
+        else
+        {
+            disablePanelState();
+            Log.d(TAG,"Light: " + light.getId() + "not reacheable");
         }
 
 
@@ -186,7 +212,7 @@ public class Panel implements Serializable {
     public void setupViewsListeners() {
         Log.d(TAG, "inside setupViewsListeners: is local panel: " + isLocalPanel + " fragment type layout: " + TYPE);
 //
-        if (TYPE == FragmentManager.PLANE_LAYOUT) {
+        if (TYPE == FragmentLayoutManager.PLANE_LAYOUT) {
 
             onOffswitch.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -227,7 +253,7 @@ public class Panel implements Serializable {
                 }
             });
 
-        } else if (TYPE == FragmentManager.CARD_LAYOUT) {
+        } else if (TYPE == FragmentLayoutManager.CARD_LAYOUT) {
 
             if (isLocalPanel) {
                 onOffswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

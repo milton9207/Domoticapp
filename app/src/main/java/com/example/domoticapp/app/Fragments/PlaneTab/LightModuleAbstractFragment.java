@@ -16,14 +16,13 @@ import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.hue.sdk.heartbeat.PHHeartbeatManager;
 import com.philips.lighting.model.PHBridge;
 
-import java.util.Observable;
-
 /**
  * Created by milton on 1/10/15.
  */
 public abstract class LightModuleAbstractFragment extends LifecycleLogginFragment implements LightCacheUpdateListener{
 
 
+    public int TYPE;
     protected final String TAG = getClass().getSimpleName();
     protected final int HEARTBEAT_TIME = 5000;
 
@@ -38,6 +37,7 @@ public abstract class LightModuleAbstractFragment extends LifecycleLogginFragmen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setLayoutType();
 
     }
 
@@ -48,7 +48,6 @@ public abstract class LightModuleAbstractFragment extends LifecycleLogginFragmen
 
 
         view = createView(inflater,container);
-//        mPanel = new Panel(view);
 
         return view;
     }
@@ -56,8 +55,11 @@ public abstract class LightModuleAbstractFragment extends LifecycleLogginFragmen
     //template method
     protected abstract View createView(LayoutInflater inflater, ViewGroup container);
 
-    public void setLayoutType(int type){
+    public abstract void setLayoutType();
 
+    public int getLayoutType()
+    {
+        return this.TYPE;
     }
 
     protected abstract void manageCacheUpdate();

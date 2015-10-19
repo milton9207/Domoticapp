@@ -4,7 +4,7 @@ package com.example.domoticapp.app.Fragments.PlaneTab;
 /**
  * Created by milton on 1/10/15.
  */
-public class FragmentManager {
+public class FragmentLayoutManager {
 
     public static int LIGHT_MODULE_FRAGMENT = 0;
     public static int SOUND_MODULE_FRAGMENT = 1;
